@@ -1,7 +1,7 @@
 import type { PlatformAccessory, Service } from "homebridge";
 
 import type { ProcmonPlatform } from "../platform";
-import { monitorNeedsAttention } from "../config";
+import { monitorDisplayName, monitorNeedsAttention, monitorRole } from "../config";
 import type { ProcmonMonitorState } from "../types";
 
 export class MonitorSensorAccessory {
@@ -27,14 +27,18 @@ export class MonitorSensorAccessory {
 
   update(monitor: ProcmonMonitorState): void {
     const needsAttention = monitorNeedsAttention(monitor.status);
+    const role = monitorRole(monitor);
+    const label = monitorDisplayName(monitor);
 
-    this.accessory.displayName = monitor.name || monitor.id;
+    this.accessory.displayName = label;
     this.accessory.context = {
       kind: "monitor",
       monitorId: monitor.id,
+      role,
+      label,
     };
 
-    this.service.setCharacteristic(this.platform.api.hap.Characteristic.Name, `${this.accessory.displayName} Issue`);
+    this.service.setCharacteristic(this.platform.api.hap.Characteristic.Name, label);
     this.service.setCharacteristic(
       this.platform.api.hap.Characteristic.ContactSensorState,
       needsAttention
@@ -58,9 +62,24 @@ export class MonitorSensorAccessory {
   }
 
   private configureInformation(): void {
+    const model = accessoryModel(monitorRole(this.monitor));
+
     this.informationService
       .setCharacteristic(this.platform.api.hap.Characteristic.Manufacturer, "rpi-procmon")
-      .setCharacteristic(this.platform.api.hap.Characteristic.Model, "Monitor Health Sensor")
+      .setCharacteristic(this.platform.api.hap.Characteristic.Model, model)
       .setCharacteristic(this.platform.api.hap.Characteristic.SerialNumber, this.monitor.id);
+  }
+}
+
+function accessoryModel(role: ReturnType<typeof monitorRole>): string {
+  switch (role) {
+    case "service":
+      return "Procmon Service Sensor";
+    case "container":
+      return "Procmon Container Sensor";
+    case "plugin":
+      return "Procmon Plugin Sensor";
+    default:
+      return "Procmon Monitor Sensor";
   }
 }

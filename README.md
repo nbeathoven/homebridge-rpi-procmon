@@ -5,8 +5,8 @@
 ## Current Scope
 
 - Polls `GET /status` from `rpi-procmon`
-- Exposes one optional overall Contact Sensor for global procmon health
-- Exposes one Contact Sensor per selected procmon monitor
+- Exposes one optional overall Contact Sensor for the procmon supervisor
+- Exposes one Contact Sensor per selected procmon monitor, with labels that distinguish services, containers, and plugin-level monitors
 - Updates cached accessories dynamically as monitor inventory changes
 
 This initial version is intentionally read-only. Restart actions, host reboot, and procmon restart switches should only be added after `rpi-procmon` exposes authenticated control endpoints.
@@ -20,7 +20,14 @@ This initial version is intentionally read-only. Restart actions, host reboot, a
   - `Closed` = healthy
   - `Open` = degraded, failed, recovering, unknown
 
-That keeps the Home app model simple and semantically honest. Text-heavy issue history belongs in a Homebridge UI, not in HomeKit characteristics.
+Naming model:
+
+- `Rpi Procmon Supervisor`
+- `Service: Homebridge`
+- `Container: Scrypted`
+- `Plugin: Scrypted Arlo`
+
+That keeps procmon itself visually distinct from the items it monitors, while still using a simple binary health model in Apple Home. Text-heavy issue history belongs in a Homebridge UI, not in HomeKit characteristics.
 
 ## Installation
 
@@ -56,7 +63,7 @@ npm run check
 
 - Package name: `homebridge-rpi-procmon`
 - Plugin alias: `RpiProcmon`
-- Requires `homebridge` `^1.11.2`
+- Requires `homebridge` `^1.11.2 || ^2.0.0-alpha.0`
 - Requires Node `^18.15.0 || ^20.7.0 || ^22 || ^24`
 
 ## Roadmap

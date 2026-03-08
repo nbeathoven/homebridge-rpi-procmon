@@ -6,7 +6,7 @@ import type {
   PlatformConfig,
 } from "homebridge";
 
-import { normalizeConfig, selectVisibleMonitors } from "./config";
+import { monitorDisplayName, normalizeConfig, overallDisplayName, selectVisibleMonitors } from "./config";
 import { MonitorSensorAccessory } from "./accessories/monitor-sensor-accessory";
 import { OverallSensorAccessory } from "./accessories/overall-sensor-accessory";
 import { ProcmonClient } from "./procmon-client";
@@ -87,7 +87,7 @@ export class ProcmonPlatform implements DynamicPlatformPlugin {
     }
 
     const accessory = new this.api.platformAccessory<AccessoryContext>(
-      `${this.normalizedConfig.name} Fault`,
+      overallDisplayName(this.normalizedConfig.name),
       uuid,
     );
     new OverallSensorAccessory(this, accessory, snapshot);
@@ -113,7 +113,7 @@ export class ProcmonPlatform implements DynamicPlatformPlugin {
       }
 
       const accessory = new this.api.platformAccessory<AccessoryContext>(
-        `${monitor.name || monitor.id} Issue`,
+        monitorDisplayName(monitor),
         uuid,
       );
       new MonitorSensorAccessory(this, accessory, monitor);

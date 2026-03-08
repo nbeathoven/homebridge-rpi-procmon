@@ -1,7 +1,7 @@
 import type { PlatformAccessory, Service } from "homebridge";
 
 import type { ProcmonPlatform } from "../platform";
-import { overallNeedsAttention } from "../config";
+import { overallDisplayName, overallNeedsAttention } from "../config";
 import type { ProcmonStatus } from "../types";
 
 export class OverallSensorAccessory {
@@ -27,11 +27,12 @@ export class OverallSensorAccessory {
 
   update(snapshot: ProcmonStatus): void {
     const needsAttention = overallNeedsAttention(snapshot.overall_status);
-    const sensorName = `${this.platform.normalizedConfig.name} Fault`;
+    const sensorName = overallDisplayName(this.platform.normalizedConfig.name);
 
     this.accessory.displayName = sensorName;
     this.accessory.context = {
       kind: "overall",
+      label: sensorName,
     };
 
     this.service.setCharacteristic(this.platform.api.hap.Characteristic.Name, sensorName);
@@ -56,7 +57,7 @@ export class OverallSensorAccessory {
   private configureInformation(): void {
     this.informationService
       .setCharacteristic(this.platform.api.hap.Characteristic.Manufacturer, "rpi-procmon")
-      .setCharacteristic(this.platform.api.hap.Characteristic.Model, "Overall Health Sensor")
+      .setCharacteristic(this.platform.api.hap.Characteristic.Model, "Procmon Supervisor Sensor")
       .setCharacteristic(this.platform.api.hap.Characteristic.SerialNumber, "overall");
   }
 }

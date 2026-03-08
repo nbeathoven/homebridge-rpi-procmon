@@ -1,6 +1,12 @@
 import type { Logger } from "homebridge";
 
-import type { NormalizedConfig, ProcmonMonitorState, ProcmonPlatformConfig, ProcmonStatus } from "./types";
+import type {
+  MonitorRole,
+  NormalizedConfig,
+  ProcmonMonitorState,
+  ProcmonPlatformConfig,
+  ProcmonStatus,
+} from "./types";
 
 const DEFAULT_ENDPOINT = "http://127.0.0.1:9645";
 const DEFAULT_POLL_INTERVAL_SECONDS = 15;
@@ -54,6 +60,39 @@ export function monitorNeedsAttention(status: string): boolean {
   return !["healthy"].includes(status);
 }
 
+export function overallDisplayName(name: string): string {
+  return `${name} Supervisor`;
+}
+
+export function monitorDisplayName(monitor: ProcmonMonitorState): string {
+  const role = monitorRole(monitor);
+  const rawName = cleanMonitorName(monitor.name || monitor.id);
+
+  switch (role) {
+    case "service":
+      return `Service: ${trimRoleSuffix(rawName, / service$/i)}`;
+    case "container":
+      return `Container: ${trimRoleSuffix(rawName, / container$/i)}`;
+    case "plugin":
+      return `Plugin: ${rawName}`;
+    default:
+      return `Monitor: ${rawName}`;
+  }
+}
+
+export function monitorRole(monitor: ProcmonMonitorState): MonitorRole {
+  switch (monitor.type) {
+    case "systemd-service":
+      return "service";
+    case "docker-container":
+      return "container";
+    case "docker-log":
+      return "plugin";
+    default:
+      return "monitor";
+  }
+}
+
 function isHealthyMonitor(status: string): boolean {
   return status === "healthy";
 }
@@ -68,6 +107,19 @@ function normalizeEndpoint(value: string): string {
 
 function cleanString(value: string | undefined): string {
   return (value ?? "").trim();
+}
+
+function cleanMonitorName(value: string): string {
+  const trimmed = cleanString(value);
+  if (!trimmed) {
+    return "Unnamed";
+  }
+  return trimmed.replace(/^service:\s*/i, "").replace(/^container:\s*/i, "").replace(/^plugin:\s*/i, "");
+}
+
+function trimRoleSuffix(value: string, suffix: RegExp): string {
+  const trimmed = value.replace(suffix, "").trim();
+  return trimmed || value;
 }
 
 function cleanStringArray(values: string[] | undefined): string[] {

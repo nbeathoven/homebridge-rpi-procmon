@@ -42,16 +42,30 @@ export interface ProcmonMonitorState {
   type: string;
   enabled: boolean;
   status: string;
+  metadata?: Record<string, string>;
+  configured_checks?: ProcmonCheck[];
   last_error?: string;
   last_failure_reasons?: string[];
   next_check_at?: string;
 }
 
+export interface ProcmonCheck {
+  id: string;
+  type: string;
+  container?: string;
+  command?: string;
+}
+
+export type MonitorRole = "service" | "container" | "plugin" | "monitor";
+
 export type AccessoryContext =
   | {
       kind: "overall";
+      label?: string;
     }
   | {
       kind: "monitor";
       monitorId: string;
+      role?: MonitorRole;
+      label?: string;
     };
