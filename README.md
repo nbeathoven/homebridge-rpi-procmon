@@ -41,7 +41,7 @@ npm install -g homebridge-rpi-procmon
 {
   "platform": "RpiProcmon",
   "name": "Rpi Procmon",
-  "endpoint": "http://192.168.5.11:9645",
+  "endpoint": "http://192.168.0.1:9645",
   "pollIntervalSeconds": 15,
   "requestTimeoutMs": 4000,
   "exposeOverallSensor": true,
