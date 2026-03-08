@@ -1,0 +1,73 @@
+{
+  "pluginAlias": "RpiProcmon",
+  "pluginType": "platform",
+  "headerDisplay": "Expose rpi-procmon monitor health to Apple Home as Contact Sensors.",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Platform Name",
+        "type": "string",
+        "default": "Rpi Procmon",
+        "description": "Display name for this Homebridge platform instance."
+      },
+      "endpoint": {
+        "title": "Procmon API Base URL",
+        "type": "string",
+        "default": "http://127.0.0.1:9645",
+        "description": "Base URL for the procmon API. Example: http://192.168.5.11:9645"
+      },
+      "pollIntervalSeconds": {
+        "title": "Poll Interval (seconds)",
+        "type": "integer",
+        "default": 15,
+        "minimum": 5,
+        "maximum": 300,
+        "description": "How often the plugin fetches /status from procmon."
+      },
+      "requestTimeoutMs": {
+        "title": "Request Timeout (ms)",
+        "type": "integer",
+        "default": 4000,
+        "minimum": 1000,
+        "maximum": 30000,
+        "description": "HTTP timeout for procmon API requests."
+      },
+      "exposeOverallSensor": {
+        "title": "Expose Overall Fault Sensor",
+        "type": "boolean",
+        "default": true,
+        "description": "Create one top-level Contact Sensor for overall procmon health."
+      },
+      "exposeDisabledMonitors": {
+        "title": "Expose Disabled Monitors",
+        "type": "boolean",
+        "default": false,
+        "description": "Include monitors that procmon reports as disabled."
+      },
+      "hideHealthyMonitors": {
+        "title": "Hide Healthy Monitors",
+        "type": "boolean",
+        "default": false,
+        "description": "Only expose monitors that currently need attention."
+      },
+      "includeMonitors": {
+        "title": "Include Monitor IDs",
+        "type": "array",
+        "description": "Optional allowlist of procmon monitor ids to expose.",
+        "items": {
+          "type": "string"
+        }
+      },
+      "excludeMonitors": {
+        "title": "Exclude Monitor IDs",
+        "type": "array",
+        "description": "Optional denylist of procmon monitor ids to hide.",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": ["endpoint"]
+  }
+}

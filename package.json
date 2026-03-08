@@ -1,0 +1,62 @@
+{
+  "name": "homebridge-rpi-procmon",
+  "displayName": "Homebridge Rpi Procmon",
+  "version": "0.1.0",
+  "description": "Homebridge dynamic platform plugin for exposing rpi-procmon monitor health in Apple Home.",
+  "license": "MIT",
+  "author": "Nima Beathoven",
+  "homepage": "https://github.com/nbeathoven/homebridge-rpi-procmon#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nbeathoven/homebridge-rpi-procmon.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nbeathoven/homebridge-rpi-procmon/issues"
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "homebridge",
+    "homekit",
+    "raspberry-pi",
+    "procmon",
+    "monitoring"
+  ],
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "config.schema.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": "^18.15.0 || ^20.7.0 || ^22 || ^24",
+    "homebridge": "^1.11.2"
+  },
+  "peerDependencies": {
+    "homebridge": "^1.11.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.14",
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
+    "eslint": "^9.23.0",
+    "homebridge": "^1.11.2",
+    "typescript": "^5.8.2"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "lint": "eslint \"src/**/*.ts\"",
+    "check": "npm run lint && npm run build",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run check"
+  },
+  "homebridge": {
+    "platforms": [
+      {
+        "platform": "RpiProcmon",
+        "name": "Rpi Procmon"
+      }
+    ]
+  }
+}
