@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "Homebridge dynamic platform plugin for exposing rpi-procmon monitor health in Apple Home.",
   "license": "MIT",
-  "author": "Nima Beathoven",
+  "author": "nbeathoven",
   "homepage": "https://github.com/nbeathoven/homebridge-rpi-procmon#readme",
   "repository": {
     "type": "git",
@@ -22,6 +22,9 @@
     "monitoring"
   ],
   "main": "dist/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist",
     "config.schema.json",
