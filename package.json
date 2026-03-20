@@ -1,7 +1,7 @@
 {
   "name": "homebridge-rpi-procmon",
   "displayName": "Homebridge Rpi Procmon",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Homebridge dynamic platform plugin for exposing rpi-procmon monitor health in Apple Home.",
   "license": "MIT",
   "author": "nbeathoven",

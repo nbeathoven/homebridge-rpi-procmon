@@ -57,6 +57,7 @@ export class OverallSensorAccessory {
   private configureInformation(): void {
     this.informationService
       .setCharacteristic(this.platform.api.hap.Characteristic.Manufacturer, "rpi-procmon")
+      .setCharacteristic(this.platform.api.hap.Characteristic.Name, overallDisplayName(this.platform.normalizedConfig.name))
       .setCharacteristic(this.platform.api.hap.Characteristic.Model, "Procmon Supervisor Sensor")
       .setCharacteristic(this.platform.api.hap.Characteristic.SerialNumber, "overall");
   }

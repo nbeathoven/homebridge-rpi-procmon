@@ -66,6 +66,7 @@ export class MonitorSensorAccessory {
 
     this.informationService
       .setCharacteristic(this.platform.api.hap.Characteristic.Manufacturer, "rpi-procmon")
+      .setCharacteristic(this.platform.api.hap.Characteristic.Name, monitorDisplayName(this.monitor))
       .setCharacteristic(this.platform.api.hap.Characteristic.Model, model)
       .setCharacteristic(this.platform.api.hap.Characteristic.SerialNumber, this.monitor.id);
   }
