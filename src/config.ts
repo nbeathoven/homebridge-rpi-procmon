@@ -61,7 +61,7 @@ export function monitorNeedsAttention(status: string): boolean {
 }
 
 export function overallDisplayName(name: string): string {
-  return `${name} Supervisor`;
+  return toHapSafeName(`${name} Supervisor`, "Rpi Procmon Supervisor");
 }
 
 export function monitorDisplayName(monitor: ProcmonMonitorState): string {
@@ -70,13 +70,13 @@ export function monitorDisplayName(monitor: ProcmonMonitorState): string {
 
   switch (role) {
     case "service":
-      return `Service: ${trimRoleSuffix(rawName, / service$/i)}`;
+      return toHapSafeName(`Service ${trimRoleSuffix(rawName, / service$/i)}`, "Service Monitor");
     case "container":
-      return `Container: ${trimRoleSuffix(rawName, / container$/i)}`;
+      return toHapSafeName(`Container ${trimRoleSuffix(rawName, / container$/i)}`, "Container Monitor");
     case "plugin":
-      return `Plugin: ${rawName}`;
+      return toHapSafeName(`Plugin ${rawName}`, "Plugin Monitor");
     default:
-      return `Monitor: ${rawName}`;
+      return toHapSafeName(`Monitor ${rawName}`, "Procmon Monitor");
   }
 }
 
@@ -114,12 +114,27 @@ function cleanMonitorName(value: string): string {
   if (!trimmed) {
     return "Unnamed";
   }
-  return trimmed.replace(/^service:\s*/i, "").replace(/^container:\s*/i, "").replace(/^plugin:\s*/i, "");
+  return trimmed
+    .replace(/^service[:\s-]*/i, "")
+    .replace(/^container[:\s-]*/i, "")
+    .replace(/^plugin[:\s-]*/i, "")
+    .replace(/^monitor[:\s-]*/i, "");
 }
 
 function trimRoleSuffix(value: string, suffix: RegExp): string {
   const trimmed = value.replace(suffix, "").trim();
   return trimmed || value;
+}
+
+function toHapSafeName(value: string, fallback: string): string {
+  const normalized = cleanString(value)
+    .replace(/[^A-Za-z0-9' ]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/^[^A-Za-z0-9]+/, "")
+    .replace(/[^A-Za-z0-9]+$/, "");
+
+  return normalized || fallback;
 }
 
 function cleanStringArray(values: string[] | undefined): string[] {
