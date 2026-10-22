@@ -34,7 +34,11 @@ export function normalizeConfig(config: ProcmonPlatformConfig, log: Logger): Nor
   };
 }
 
-export function selectVisibleMonitors(snapshot: ProcmonStatus, config: NormalizedConfig): ProcmonMonitorState[] {
+export function selectVisibleMonitors(
+  snapshot: ProcmonStatus,
+  config: NormalizedConfig,
+  exposedMonitorIds: ReadonlySet<string> = new Set(),
+): ProcmonMonitorState[] {
   return (snapshot.monitors || []).filter((monitor) => {
     if (!config.exposeDisabledMonitors && (!monitor.enabled || monitor.status === "disabled")) {
       return false;
@@ -45,7 +49,7 @@ export function selectVisibleMonitors(snapshot: ProcmonStatus, config: Normalize
     if (config.excludeMonitors.has(monitor.id)) {
       return false;
     }
-    if (config.hideHealthyMonitors && isHealthyMonitor(monitor.status)) {
+    if (config.hideHealthyMonitors && isHealthyMonitor(monitor.status) && !exposedMonitorIds.has(monitor.id)) {
       return false;
     }
     return true;
@@ -53,11 +57,11 @@ export function selectVisibleMonitors(snapshot: ProcmonStatus, config: Normalize
 }
 
 export function overallNeedsAttention(status: string): boolean {
-  return !["healthy", "recovering"].includes(status);
+  return !["healthy", "disabled"].includes(status);
 }
 
 export function monitorNeedsAttention(status: string): boolean {
-  return !["healthy"].includes(status);
+  return !["healthy", "disabled"].includes(status);
 }
 
 export function overallDisplayName(name: string): string {

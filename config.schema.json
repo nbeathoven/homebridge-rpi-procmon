@@ -49,7 +49,7 @@
         "title": "Hide Healthy Monitors",
         "type": "boolean",
         "default": false,
-        "description": "Only expose monitors that currently need attention."
+        "description": "Initially hide healthy monitors. Once exposed, retain a monitor when it recovers to preserve HomeKit identity and automations."
       },
       "includeMonitors": {
         "title": "Include Monitor IDs",

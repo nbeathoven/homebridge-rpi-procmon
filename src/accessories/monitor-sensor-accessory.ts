@@ -1,7 +1,7 @@
 import type { PlatformAccessory, Service } from "homebridge";
 
 import type { ProcmonPlatform } from "../platform";
-import { monitorDisplayName, monitorNeedsAttention, monitorRole } from "../config";
+import { monitorDisplayName, monitorRole } from "../config";
 import type { ProcmonMonitorState } from "../types";
 
 export class MonitorSensorAccessory {
@@ -26,7 +26,7 @@ export class MonitorSensorAccessory {
   }
 
   update(monitor: ProcmonMonitorState): void {
-    const needsAttention = monitorNeedsAttention(monitor.status);
+    const { needsAttention, active, completedState } = this.platform.getMonitorHealth(monitor);
     const role = monitorRole(monitor);
     const label = monitorDisplayName(monitor);
 
@@ -36,6 +36,7 @@ export class MonitorSensorAccessory {
       monitorId: monitor.id,
       role,
       label,
+      completedState,
     };
 
     this.service.setCharacteristic(this.platform.api.hap.Characteristic.Name, label);
@@ -47,7 +48,7 @@ export class MonitorSensorAccessory {
     );
     this.service.setCharacteristic(
       this.platform.api.hap.Characteristic.StatusActive,
-      monitor.enabled,
+      active,
     );
     this.service.setCharacteristic(
       this.platform.api.hap.Characteristic.StatusFault,

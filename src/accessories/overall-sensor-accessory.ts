@@ -1,7 +1,7 @@
 import type { PlatformAccessory, Service } from "homebridge";
 
 import type { ProcmonPlatform } from "../platform";
-import { overallDisplayName, overallNeedsAttention } from "../config";
+import { overallDisplayName } from "../config";
 import type { ProcmonStatus } from "../types";
 
 export class OverallSensorAccessory {
@@ -26,7 +26,9 @@ export class OverallSensorAccessory {
   }
 
   update(snapshot: ProcmonStatus): void {
-    const needsAttention = overallNeedsAttention(snapshot.overall_status);
+    const health = snapshot.monitors.map((monitor) => this.platform.getMonitorHealth(monitor));
+    const enabled = snapshot.monitors.some((monitor) => monitor.enabled && monitor.status !== "disabled");
+    const needsAttention = enabled && health.some((monitor) => monitor.needsAttention);
     const sensorName = overallDisplayName(this.platform.normalizedConfig.name);
 
     this.accessory.displayName = sensorName;
@@ -44,7 +46,8 @@ export class OverallSensorAccessory {
     );
     this.service.setCharacteristic(
       this.platform.api.hap.Characteristic.StatusActive,
-      true,
+      enabled && health.every((monitor, index) =>
+        !snapshot.monitors[index].enabled || snapshot.monitors[index].status === "disabled" || monitor.active),
     );
     this.service.setCharacteristic(
       this.platform.api.hap.Characteristic.StatusFault,
